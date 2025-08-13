@@ -8,8 +8,8 @@
   },
   "keywords": [],
   "author": "",
+  "type": "module",
   "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
     "@neondatabase/serverless": "^1.0.0",
     "cors": "^2.8.5",
