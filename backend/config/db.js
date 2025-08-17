@@ -1,7 +1,8 @@
-import {neon}  from "@neondatabase/serverless";
+import { neon } from "@neondatabase/serverless";
+import dotenv from "dotenv";
 
-import "dotenv/config";
+dotenv.config();
 
+const sql = neon(process.env.DATABASE_URL);
 
-//creates a connection to the Neon database using the DATABASE_URL from the environment variables
-export const sql = neon(process.env.DATABASE_URL)
+export { sql };
