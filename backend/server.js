@@ -32,38 +32,15 @@ async function initDB() {
         process.exit(1);
     }
 }
+//MIDDLEWAREv
  app.use(express.json());
 
-//POST route to insert new data
-app.post("/api/skillshowcase", async (req, res) => {
-    try {
-        const { title, amount, category, user_id } = req.body;
-
-        if (!title ||  amount === undefined || !category || !user_id) {
-            return res.status(400).json({ error: "All fields are required" });
-        }
-
-        const skills = await sql`
-            INSERT INTO skillshowcase (title, amount, category, user_id)
-            VALUES (${title}, ${amount}, ${category}, ${user_id})
-            RETURNING *
-        `;
-        console.log("Skills added:", skills);
-
-
-        res.status(201).json(skills[0]);
-    } catch (error) {
-        console.error("Error in recording your skills", error);
-        res.status(500).json({ message: "Internal server error" });
-    }
-});
-
-app.get("/api/skillshowcase/:userId", async (req, res) => {
+ app.get("/api/skillshowcase/:userId", async (req, res) => {
     try {
 
-        const { userId } = req.params;
+        const {userId} = req.params;
        const skillshowcase =await sql`
-       SELECT * FROM skillshowcase WHERE user_id = ${userID} ORDER BY created_at DESC
+       SELECT * FROM skillshowcase WHERE user_id = ${userId} ORDER BY created_at DESC
        `
        res.status(200).json(skillshowcase);
 
@@ -86,6 +63,52 @@ app.get("/api/skillshowcase/:userId", async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 });
+
+
+//POST route to insert new data
+app.post("/api/skillshowcase", async (req, res) => {
+    try {
+        const { title, amount, category, user_id } = req.body;
+
+        if (!title ||  amount === undefined || !category || !user_id) {
+            return res.status(400).json({ error: "All fields are required" });
+        }
+
+        const skills = await sql`
+            INSERT INTO skillshowcase (title, amount, category, user_id)
+            VALUES (${title}, ${amount}, ${category}, ${user_id})
+            RETURNING *
+        `;
+        console.log("skillshowcase");
+
+
+        res.status(201).json(skills[0]);
+    } catch (error) {
+        console.error("Error in recording your skills", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+app.delete("/api/skillshowcase/:id", async (req, res) => {
+    try {
+        const {id} =req.params;
+
+        const result = await sql`
+        DELETE FROM skillshowcase WHERE id = ${id} RETURNING *
+        `; 
+
+        if(result.length === 0){
+            return res.status(404).json({message: "Skill not found"});
+        }
+
+        res.status(200).json({message: "Skill deleted successfully"});
+    }catch (error) {
+        console.error("Error deleting skill:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+
+});
+
 
 
 
