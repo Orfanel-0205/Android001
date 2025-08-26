@@ -7,11 +7,11 @@ dotenv.config();
 const app = express();
 
 
-app.use(express.json());
-app.use((req, res, next) => {
-    console.log("This is okay", req.method)
-    next();
-});
+// app.use(express.json());
+// app.use((req, res, next) => {
+//     console.log("This is okay", req.method)
+//     next();
+// });
 
 const PORT = process.env.PORT || 5001;
 
@@ -23,7 +23,7 @@ async function initDB() {
             title VARCHAR(255) NOT NULL,
             amount DECIMAL(10, 2) NOT NULL,
             category VARCHAR(255) NOT NULL,
-            created_at TIMESTAMP NOT NULL DEFAULT NOW()
+            created_at DATE NOT NULL DEFAULT CURRENT_DATE
         )`;
 
         console.log("Database initialized successfully");
@@ -32,6 +32,7 @@ async function initDB() {
         process.exit(1);
     }
 }
+ app.use(express.json());
 
 //POST route to insert new data
 app.post("/api/skillshowcase", async (req, res) => {
@@ -57,15 +58,39 @@ app.post("/api/skillshowcase", async (req, res) => {
     }
 });
 
-// Test route
-app.get("/", (req, res) => {
-    res.send("Hello from the server Clifford");
+app.get("/api/skillshowcase/:userId", async (req, res) => {
+    try {
+
+        const { userId } = req.params;
+       const skillshowcase =await sql`
+       SELECT * FROM skillshowcase WHERE user_id = ${userID} ORDER BY created_at DESC
+       `
+       res.status(200).json(skillshowcase);
+
+        if (!userId) {
+            return res.status(400).json({ error: "User ID is required" });
+        }
+
+        // Fetch all skills belonging to this user
+        const skills = await sql`
+            SELECT * FROM skillshowcase WHERE user_id = ${userId}
+        `;
+
+        if (skills.length === 0) {
+            return res.status(404).json({ message: "No skills found for this user" });
+        }
+
+        res.status(200).json(skills);
+    } catch (error) {
+        console.error("Error fetching skills:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
 });
 
-console.log("My port:", process.env.PORT);
+
 
 initDB().then(() => {
     app.listen(PORT, () => {
-        console.log(`Server is running on PORT: ${PORT}`);
+        console.log("Server is running on PORT:" ,PORT);
     });
 });
