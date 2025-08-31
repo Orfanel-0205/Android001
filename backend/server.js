@@ -707,7 +707,7 @@ app.get("/api/messages/:userId", authenticateToken, async (req, res) => {
     }
 });
 
-// ============= NOTIFICATIONS =============
+// #########NOTIFICATIONS##########
 
 // Get user notifications
 app.get("/api/notifications/:userId", authenticateToken, async (req, res) => {
@@ -822,7 +822,7 @@ app.get("/api/analytics/skills/categories", async (req, res) => {
     }
 });
 
-// ============= ADMIN PANEL =============
+//Admin panel 
 
 // Get all users (admin only)
 app.get("/api/admin/users", authenticateToken, async (req, res) => {
