@@ -822,9 +822,7 @@ app.get("/api/analytics/skills/categories", async (req, res) => {
     }
 });
 
-//Admin panel 
 
-// Get all users (admin only)
 app.get("/api/admin/users", authenticateToken, async (req, res) => {
     try {
         if (req.user.role !== 'admin') {
