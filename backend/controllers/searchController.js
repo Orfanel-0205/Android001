@@ -1,5 +1,5 @@
 export const searchController = {
-    // Global search across platform
+   
     async globalSearch(req, res) {
         try {
             const { query, type, limit = 20 } = req.query;
@@ -10,7 +10,7 @@ export const searchController = {
 
             const searchResults = {};
 
-            // Search users (if type is 'users' or 'all')
+            
             if (!type || type === 'users' || type === 'all') {
                 searchResults.users = await sql`
                     SELECT 
